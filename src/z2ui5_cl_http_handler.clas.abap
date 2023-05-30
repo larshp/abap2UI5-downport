@@ -28,6 +28,7 @@ CLASS z2ui5_cl_http_handler DEFINITION
       RETURNING
         VALUE(result) TYPE string.
 
+
   PROTECTED SECTION.
   PRIVATE SECTION.
 
@@ -112,7 +113,9 @@ CLASS Z2UI5_CL_HTTP_HANDLER IMPLEMENTATION.
                            `            onAfterRendering: function () {` && |\n|  &&
                            `                sap.z2ui5.onAfter();` && |\n|  &&
                            `            },` && |\n|  &&
-                           |\n|  &&
+                           `            do: function (value) {` && |\n|  &&
+                           `                return value;` && |\n|  &&
+                           `            },` && |\n|  &&
                            `            onEventFrontend: function (vAction) {` && |\n|  &&
                            |\n|  &&
                            `                if (vAction == 'POPUP_CLOSE') {` && |\n|  &&
@@ -151,8 +154,10 @@ CLASS Z2UI5_CL_HTTP_HANDLER IMPLEMENTATION.
                            `                        try {` && |\n|  &&
                            `                            item.VALUE = this.getView().byId(item.NAME).getScrollDelegate().getScrollTop();` && |\n|  &&
                            `                        } catch (e) {` && |\n|  &&
+                           `                            try { ` && |\n|  &&
                            `                            var ele = '#' + this.getView().byId(item.NAME).getId() + '-inner';` && |\n|  &&
                            `                            item.VALUE = $(ele).scrollTop();` && |\n|  &&
+                           `                          } catch (e) { }` && |\n|  &&
                            `                        }` && |\n|  &&
                            `                    });` && |\n|  &&
                            `                }` && |\n|  &&
@@ -173,9 +178,9 @@ CLASS Z2UI5_CL_HTTP_HANDLER IMPLEMENTATION.
                            `            },` && |\n|  &&
                            `            Roundtrip: function (isHoldView) {` && |\n|  &&
                            `                sap.z2ui5.checkTimerActive = false;` && |\n|  &&
-                           `                if (sap.z2ui5.oView && !isHoldView) {` && |\n|  &&
+                           `                if (sap.z2ui5.oView ) { if (!isHoldView ) {` && |\n|  &&
                            `                    sap.z2ui5.oView.destroy();` && |\n|  &&
-                           `                }` && |\n|  &&
+                           `                } }` && |\n|  &&
                            `                var xhr = new XMLHttpRequest();` && |\n|  &&
                            `             //   var url = "/sap/bc/http/sap/y2ui5_http_handler/";` && |\n|  &&
                            `             //   xhr.open("POST", url, true);` && |\n|  &&
@@ -261,8 +266,10 @@ CLASS Z2UI5_CL_HTTP_HANDLER IMPLEMENTATION.
                            `                    try {` && |\n|  &&
                            `                        oView.byId(item.NAME).scrollTo(parseInt(item.VALUE));` && |\n|  &&
                            `                    } catch (e) {` && |\n|  &&
+                           `                        try {` && |\n|  &&
                            `                        var ele = '#' + oView.byId(item.NAME).getId() + '-inner';` && |\n|  &&
                            `                        $(ele).scrollTop(item.VALUE);` && |\n|  &&
+                           `                       } catch ( e ) { }` && |\n|  &&
                            `                    }` && |\n|  &&
                            `                }` && |\n|  &&
                            `                );` && |\n|  &&
