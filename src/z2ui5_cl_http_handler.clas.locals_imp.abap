@@ -560,12 +560,6 @@ CLASS z2ui5_lcl_utility_tree_json DEFINITION.
       RETURNING
         VALUE(result) TYPE string.
 
-    METHODS add_list_val
-      IMPORTING
-        v             TYPE string
-      RETURNING
-        VALUE(result) TYPE REF TO z2ui5_lcl_utility_tree_json.
-
     METHODS add_attribute
       IMPORTING
         n             TYPE clike
@@ -583,20 +577,6 @@ CLASS z2ui5_lcl_utility_tree_json DEFINITION.
     METHODS add_attribute_struc
       IMPORTING
         val           TYPE data
-      RETURNING
-        VALUE(result) TYPE REF TO z2ui5_lcl_utility_tree_json.
-
-    METHODS add_list_object
-      RETURNING
-        VALUE(result) TYPE REF TO z2ui5_lcl_utility_tree_json.
-
-    METHODS add_list_list
-      RETURNING
-        VALUE(result) TYPE REF TO z2ui5_lcl_utility_tree_json.
-
-    METHODS add_attribute_list
-      IMPORTING
-        name          TYPE clike
       RETURNING
         VALUE(result) TYPE REF TO z2ui5_lcl_utility_tree_json.
 
@@ -660,15 +640,6 @@ CLASS z2ui5_lcl_utility_tree_json IMPLEMENTATION.
 
   ENDMETHOD.
 
-
-  METHOD add_attribute_list.
-
-    result = add_attribute_object( name ).
-    result->mv_check_list = abap_true.
-
-  ENDMETHOD.
-
-
   METHOD add_attribute_struc.
 
     FIELD-SYMBOLS <value> TYPE any.
@@ -704,44 +675,6 @@ CLASS z2ui5_lcl_utility_tree_json IMPLEMENTATION.
 
   ENDMETHOD.
 
-
-  METHOD add_list_list.
-
-    DATA temp22 TYPE string.
-    temp22 = lines( mt_values ).
-    result = add_attribute_list( temp22 ).
-
-  ENDMETHOD.
-
-
-  METHOD add_list_object.
-
-    DATA temp23 TYPE string.
-    temp23 = lines( mt_values ).
-    result = add_attribute_object( temp23 ).
-
-  ENDMETHOD.
-
-
-  METHOD add_list_val.
-
-    DATA lo_attri TYPE REF TO z2ui5_lcl_utility_tree_json.
-    lo_attri = new( io_root = mo_root iv_name = lines( mt_values ) ).
-    lo_attri->mv_value = v.
-    lo_attri->mv_apost_active = abap_true.
-
-    DATA temp24 LIKE mt_values.
-    CLEAR temp24.
-    temp24 = mt_values.
-    INSERT lo_attri INTO TABLE temp24.
-    mt_values = temp24.
-    lo_attri->mo_parent = me.
-    result = lo_attri.
-    result = me.
-
-  ENDMETHOD.
-
-
   METHOD constructor.
 
     mo_root = me.
@@ -754,11 +687,11 @@ CLASS z2ui5_lcl_utility_tree_json IMPLEMENTATION.
     CREATE OBJECT result.
     result->mo_root = result.
 
-    DATA temp26 TYPE string.
-    temp26 = iv_json.
+    DATA temp22 TYPE string.
+    temp22 = iv_json.
     /ui2/cl_json=>deserialize(
         EXPORTING
-            json         = temp26
+            json         = temp22
             assoc_arrays = abap_true
         "    conversion_exits = abap_true
         CHANGING
@@ -771,9 +704,9 @@ CLASS z2ui5_lcl_utility_tree_json IMPLEMENTATION.
 
     CREATE OBJECT result.
     result->mo_root = io_root.
-    DATA temp27 TYPE string.
-    temp27 = iv_name.
-    result->mv_name = temp27.
+    DATA temp23 TYPE string.
+    temp23 = iv_name.
+    result->mv_name = temp23.
 
   ENDMETHOD.
 
@@ -822,27 +755,27 @@ CLASS z2ui5_lcl_utility_tree_json IMPLEMENTATION.
 
   METHOD wrap_json.
 
-    DATA temp28 TYPE string.
+    DATA temp24 TYPE string.
     CASE mv_check_list.
       WHEN abap_true.
-        temp28 = |[ { iv_text }]|.
+        temp24 = |[ { iv_text }]|.
       WHEN OTHERS.
-        temp28 = `{` && iv_text && `}`.
+        temp24 = `{` && iv_text && `}`.
     ENDCASE.
-    result = temp28.
+    result = temp24.
 
   ENDMETHOD.
 
   METHOD quote_json.
 
-    DATA temp29 TYPE string.
+    DATA temp25 TYPE string.
     CASE iv_cond.
       WHEN abap_true.
-        temp29 = `"` && iv_text && `"`.
+        temp25 = `"` && iv_text && `"`.
       WHEN OTHERS.
-        temp29 = iv_text.
+        temp25 = iv_text.
     ENDCASE.
-    result = temp29.
+    result = temp25.
 
   ENDMETHOD.
 
@@ -1060,9 +993,9 @@ CLASS z2ui5_lcl_fw_app IMPLEMENTATION.
 
     CREATE OBJECT result.
     result->ms_error-x_error = error.
-    DATA temp30 TYPE REF TO z2ui5_if_app.
-    temp30 ?= app.
-    result->ms_error-app     = temp30.
+    DATA temp26 TYPE REF TO z2ui5_if_app.
+    temp26 ?= app.
+    result->ms_error-app     = temp26.
 
   ENDMETHOD.
 
@@ -1234,7 +1167,7 @@ CLASS z2ui5_lcl_fw_app IMPLEMENTATION.
                         ` > <headerContent ` && |\n|  &&
                         ` > <Title ` && |\n|  &&
                         ` /> <Title ` && |\n|  &&
-                        `  text="abap2UI5 - Development of UI5 Apps in pure ABAP" ` && |\n|  &&
+                        `  text="abap2UI5 - Developing UI5 Apps in pure ABAP" ` && |\n|  &&
                         ` /> <ToolbarSpacer ` && |\n|  &&
                         ` /> <Link ` && |\n|  &&
                         `  text="SCN" ` && |\n|  &&
@@ -1322,8 +1255,8 @@ CLASS z2ui5_lcl_fw_app IMPLEMENTATION.
         lv_check_demo = abap_false.
     ENDTRY.
     IF lv_check_demo = abap_false.
-      lv_xml_main = lv_xml_main && `<MessageStrip text="The abap2UI5 demos aren't ready! Make sure to install this additional demo repository." type="Warning" > <link> ` &&
-         `   <Link text="(LINK)"  target="_blank" href="https://github.com/oblomov-dev/abap2UI5-demos" /> ` &&
+      lv_xml_main = lv_xml_main && `<MessageStrip text="Oops! You need to install abap2UI5 demos before continuing..." type="Warning" > <link> ` &&
+         `   <Link text="(HERE)"  target="_blank" href="https://github.com/oblomov-dev/abap2UI5-demos" /> ` &&
       `  </link> </MessageStrip>`.
     ENDIF.
 
@@ -1416,8 +1349,8 @@ ls_db = temp11.
 
       SELECT SINGLE uuid uuid_prev uuid_prev_app uuid_prev_app_stack
         FROM z2ui5_t_draft
-        INTO CORRESPONDING FIELDS OF result
-        WHERE uuid = id.
+      INTO CORRESPONDING FIELDS OF result
+      WHERE uuid = id.
       z2ui5_lcl_utility=>raise( when = boolc( sy-subrc <> 0 ) ).
 
     ENDIF.
@@ -1711,7 +1644,7 @@ CLASS z2ui5_lcl_fw_handler IMPLEMENTATION.
       RETURN.
     ENDIF.
 
-    DATA lr_in type REF TO data.
+    DATA lr_in LIKE REF TO value.
     GET REFERENCE OF value INTO lr_in.
 
     DATA temp15 LIKE LINE OF ms_db-t_attri.
@@ -1941,26 +1874,26 @@ CLASS z2ui5_lcl_fw_client IMPLEMENTATION.
 
   METHOD z2ui5_if_client~nav_app_home.
 
-    DATA temp31 TYPE REF TO z2ui5_lcl_fw_app.
-    CREATE OBJECT temp31 TYPE z2ui5_lcl_fw_app.
-    z2ui5_if_client~nav_app_call( temp31 ).
+    DATA temp27 TYPE REF TO z2ui5_lcl_fw_app.
+    CREATE OBJECT temp27 TYPE z2ui5_lcl_fw_app.
+    z2ui5_if_client~nav_app_call( temp27 ).
 
   ENDMETHOD.
 
 
   METHOD z2ui5_if_client~get.
 
-    DATA temp32 TYPE z2ui5_if_client=>ty_s_get.
-    CLEAR temp32.
-    MOVE-CORRESPONDING mo_handler->ms_db TO temp32.
-    temp32-event = mo_handler->ms_actual-event.
-    temp32-event_data = mo_handler->ms_actual-event_data.
-    temp32-event_data2 = mo_handler->ms_actual-event_data2.
-    temp32-event_data3 = mo_handler->ms_actual-event_data3.
-    temp32-t_scroll_pos = mo_handler->ms_actual-t_scroll_pos.
-    temp32-t_req_header = z2ui5_cl_http_handler=>client-t_header.
-    temp32-t_req_param = z2ui5_cl_http_handler=>client-t_param.
-    result = temp32.
+    DATA temp28 TYPE z2ui5_if_client=>ty_s_get.
+    CLEAR temp28.
+    MOVE-CORRESPONDING mo_handler->ms_db TO temp28.
+    temp28-event = mo_handler->ms_actual-event.
+    temp28-event_data = mo_handler->ms_actual-event_data.
+    temp28-event_data2 = mo_handler->ms_actual-event_data2.
+    temp28-event_data3 = mo_handler->ms_actual-event_data3.
+    temp28-t_scroll_pos = mo_handler->ms_actual-t_scroll_pos.
+    temp28-t_req_header = z2ui5_cl_http_handler=>client-t_header.
+    temp28-t_req_param = z2ui5_cl_http_handler=>client-t_param.
+    result = temp28.
 
   ENDMETHOD.
 
@@ -2041,9 +1974,9 @@ CLASS z2ui5_lcl_fw_client IMPLEMENTATION.
 
   METHOD z2ui5_if_client~get_app.
 
-    DATA temp33 TYPE REF TO z2ui5_if_app.
-    temp33 ?= z2ui5_lcl_fw_db=>load_app( id )-o_app.
-    result = temp33.
+    DATA temp29 TYPE REF TO z2ui5_if_app.
+    temp29 ?= z2ui5_lcl_fw_db=>load_app( id )-o_app.
+    result = temp29.
 
   ENDMETHOD.
 
